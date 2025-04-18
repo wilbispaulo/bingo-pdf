@@ -14,5 +14,7 @@
             "email": "wilbispaulo@hotmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "tecnickcom/tcpdf": "^6.9"
+    }
 }

@@ -27,6 +27,8 @@ class BingoPdf extends TCPDF
         $this->setPrintFooter(false);
         $this->setAutoPageBreak(false);
         $this->setImageScale(1.25);
+        $this->setCellPaddings(0, 0, 0, 0);
+        $this->setCellMargins(0, 0, 0, 0);
     }
 
     public function imagePdf(
@@ -42,11 +44,19 @@ class BingoPdf extends TCPDF
         $this->Image($file, $xPos, $yPos, $width, $height, 'PNG', '', 'LTR', 2, 300, $pAlign, false, false, 0, true, false, false, false);
     }
 
-    public function barCodePdf(string $cod, int $xOffSet, array $args)
-    {
-        $this->setCellPaddings($args['pl'], $args['pt'], $args['pr'], $args['pb']);
-        $this->setCellMargins($args['ml'], $args['mt'], $args['mr'], $args['mb']);
-        $this->write1DBarcode($cod, $args['type'], $args['xpos'] + $xOffSet, $args['ypos'], $args['w'], $args['h'], $args['xres'], $args['style'], '');
+    public function barCodePdf(
+        string $cod,
+        int $xPos,
+        int $yPos,
+        int $width,
+        int $height,
+        string $type,
+        ?float $xRes = null,
+        array $style = []
+    ) {
+        $this->setCellPaddings(0, 0, 0, 0);
+        $this->setCellMargins(0, 0, 0, 0);
+        $this->write1DBarcode($cod, $type, $xPos, $yPos, $width, $height, $xRes, $style, 'LTR');
     }
 
     public function qrCodePdf(
@@ -56,24 +66,60 @@ class BingoPdf extends TCPDF
         int $width,
         int $height,
         string $ecc,
-        array $args
+        array $style = []
     ) {
-        $this->setCellPaddings($args['pl'], $args['pt'], $args['pr'], $args['pb']);
-        $this->setCellMargins($args['ml'], $args['mt'], $args['mr'], $args['mb']);
-        $this->write2DBarcode($cod, 'QRCODE,' . $ecc, $xPos, $yPos, $width, $height, $args, 'LTR', false);
+        $this->setCellPaddings(0, 0, 0, 0);
+        $this->setCellMargins(0, 0, 0, 0);
+        $this->write2DBarcode($cod, 'QRCODE,' . $ecc, $xPos, $yPos, $width, $height, $style, 'LTR', false);
     }
 
-    public function textPdf(string $text, array $args)
-    {
+    public function textPdf(
+        string $text,
+        int $xPos,
+        int $yPos,
+        int $width,
+        int $height,
+        string $align,
+        string $txtColor,
+        string $bgColor,
+        array $args
+    ) {
         // var_dump($args);
-        $color = self::hexToRGB($args['color']);
-        $bg = self::hexToRGB($args['bg']);
+        $this->setCellPaddings(0, 0, 0, 0);
+        $this->setCellMargins(0, 0, 0, 0);
+        $color = self::hexToRGB($txtColor);
+        $bg = self::hexToRGB($bgColor);
         $this->setTextColor($color[0], $color[1], $color[2]);
         $this->setFillColor($bg[0], $bg[1], $bg[2]);
-        $this->setCellPaddings($args['pl'], $args['pt'], $args['pr'], $args['pb']);
-        $this->setCellMargins($args['ml'], $args['mt'], $args['mr'], $args['mb']);
         $this->setFont($args['font'], $args['style'], $args['size']);
-        $this->MultiCell($args['w'], $args['h'], $text, $args['border'], $args['align'], $args['fill'], $args['new'], $args['xpos'], $args['ypos'], true, 0, false, true, $args['maxh'], $args['valign'], false);
+        $this->MultiCell($width, $height, $text, $args['border'], $align, $args['fill'], $args['new'], $xPos, $yPos, true, 0, false, true, $args['maxh'], $args['valign'], false);
+    }
+
+    public function textBoxPdf(
+        string $text,
+        int $xPos,
+        int $yPos,
+        int $width,
+        int $height,
+        array $args
+    ) {
+        // var_dump($args);
+        $this->setCellPaddings(0, 0, 0, 0);
+        $this->setCellMargins(0, 0, 0, 0);
+        $this->setFont($args['font'], $args['style'], $args['size']);
+        $this->MultiCell($width, $height, $text, $args['border'], $args['align'], $args['fill'], $args['new'], $xPos, $yPos, true, 0, false, true, $args['maxh'], $args['valign'], false);
+    }
+
+    public function setTxtColor(string $txtColor)
+    {
+        $color = self::hexToRGB($txtColor);
+        $this->setTextColor($color[0], $color[1], $color[2]);
+    }
+
+    public function setBgColor(string $bgColor)
+    {
+        $bg = self::hexToRGB($bgColor);
+        $this->setFillColor($bg[0], $bg[1], $bg[2]);
     }
 
     public static function hexToRGB(string | int $hexColor): array | false

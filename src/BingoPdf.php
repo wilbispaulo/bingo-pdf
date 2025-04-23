@@ -10,13 +10,13 @@ class BingoPdf extends TCPDF
     public function __construct()
     {
         parent::__construct(
-            'P',
+            'L',
             'mm',
-            'A4',
+            'A5',
             true,
             'UTF-8',
             false,
-            true
+            false
         );
 
         $this->setCreator('Bingo PDF API');
@@ -29,14 +29,28 @@ class BingoPdf extends TCPDF
         $this->setImageScale(1.25);
         $this->setCellPaddings(0, 0, 0, 0);
         $this->setCellMargins(0, 0, 0, 0);
+        $this->setMargins(0, 0, 0, true);
     }
 
-    public function imagePdf(
+    public function imageJpgPdf(
         string $file,
-        int $xPos,
-        int $yPos,
-        int $width,
-        int $height,
+        ?int $xPos = 0,
+        ?int $yPos = 0,
+        float $width = 0,
+        float $height = 0,
+        string $pAlign = 'L',
+    ) {
+        $this->setCellPaddings(0, 0, 0, 0);
+        $this->setCellMargins(0, 0, 0, 0);
+        $this->Image($file, $xPos, $yPos, $width, $height, 'JPG', '', 'LTR', 2, 300, $pAlign, false, false, 0, true, false, false, false);
+    }
+
+    public function imagePngPdf(
+        string $file,
+        ?int $xPos = null,
+        ?int $yPos = null,
+        int $width = 0,
+        int $height = 0,
         string $pAlign = 'L',
     ) {
         $this->setCellPaddings(0, 0, 0, 0);
@@ -75,16 +89,24 @@ class BingoPdf extends TCPDF
 
     public function textPdf(
         string $text,
-        int $xPos,
-        int $yPos,
-        int $width,
-        int $height,
+        float $xPos,
+        float $yPos,
+        float $width,
+        float $height,
         string $align,
         string $txtColor,
         string $bgColor,
         array $args
     ) {
-        // var_dump($args);
+        $args['font'] = ($args['font'] ?? 'helvetica');
+        $args['style'] = ($args['style'] ?? '');
+        $args['size'] = ($args['size'] ?? 12);
+        $args['border'] = ($args['border'] ?? 0);
+        $args['align'] = ($args['align'] ?? 'L');
+        $args['fill'] = ($args['fill'] ?? false);
+        $args['new'] = ($args['new'] ?? 0);
+        $args['maxh'] = ($args['maxh'] ?? 0);
+        $args['valign'] = ($args['valign'] ?? 'T');
         $this->setCellPaddings(0, 0, 0, 0);
         $this->setCellMargins(0, 0, 0, 0);
         $color = self::hexToRGB($txtColor);
@@ -97,13 +119,21 @@ class BingoPdf extends TCPDF
 
     public function textBoxPdf(
         string $text,
-        int $xPos,
-        int $yPos,
-        int $width,
-        int $height,
+        float $xPos,
+        float $yPos,
+        float $width,
+        float $height,
         array $args
     ) {
-        // var_dump($args);
+        $args['font'] = ($args['font'] ?? 'helvetica');
+        $args['style'] = ($args['style'] ?? '');
+        $args['size'] = ($args['size'] ?? 12);
+        $args['border'] = ($args['border'] ?? 0);
+        $args['align'] = ($args['align'] ?? 'L');
+        $args['fill'] = ($args['fill'] ?? false);
+        $args['new'] = ($args['new'] ?? 0);
+        $args['maxh'] = ($args['maxh'] ?? 0);
+        $args['valign'] = ($args['valign'] ?? 'T');
         $this->setCellPaddings(0, 0, 0, 0);
         $this->setCellMargins(0, 0, 0, 0);
         $this->setFont($args['font'], $args['style'], $args['size']);
@@ -137,9 +167,15 @@ class BingoPdf extends TCPDF
         return [$red, $green, $blue];
     }
 
+    public function setFilePDF(string $filePDF)
+    {
+        $this->filePDF = $filePDF;
+    }
+
     public function render()
     {
-        $this->Output($this->filePDF, 'D');
+        $pdf = $this->Output($this->filePDF, 'S');
         $this->_destroy(true);
+        return $pdf;
     }
 }

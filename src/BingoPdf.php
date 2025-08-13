@@ -7,12 +7,12 @@ use TCPDF;
 class BingoPdf extends TCPDF
 {
     private string $filePDF;
-    public function __construct()
+    public function __construct($format = 'A5', $orientation = 'L')
     {
         parent::__construct(
-            'L',
+            $orientation,
             'mm',
-            'A5',
+            $format,
             true,
             'UTF-8',
             false,

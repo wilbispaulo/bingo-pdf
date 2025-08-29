@@ -34,8 +34,8 @@ class BingoPdf extends TCPDF
 
     public function imageJpgPdf(
         string $file,
-        ?int $xPos = 0,
-        ?int $yPos = 0,
+        ?float $xPos = 0,
+        ?float $yPos = 0,
         float $width = 0,
         float $height = 0,
         string $pAlign = 'L',
@@ -47,11 +47,11 @@ class BingoPdf extends TCPDF
 
     public function imagePngPdf(
         string $file,
-        ?int $xPos = null,
-        ?int $yPos = null,
-        int $width = 0,
-        int $height = 0,
-        string $pAlign = 'L',
+        ?float $xPos = null,
+        ?float $yPos = null,
+        float $width = 0,
+        float $height = 0,
+        string $pAlign = '',
     ) {
         $this->setCellPaddings(0, 0, 0, 0);
         $this->setCellMargins(0, 0, 0, 0);
@@ -60,10 +60,10 @@ class BingoPdf extends TCPDF
 
     public function barCodePdf(
         string $cod,
-        int $xPos,
-        int $yPos,
-        int $width,
-        int $height,
+        float $xPos,
+        float $yPos,
+        float $width,
+        float $height,
         string $type,
         ?float $xRes = null,
         array $style = []
@@ -75,10 +75,10 @@ class BingoPdf extends TCPDF
 
     public function qrCodePdf(
         string $cod,
-        int $xPos,
-        int $yPos,
-        int $width,
-        int $height,
+        float $xPos,
+        float $yPos,
+        float $width,
+        float $height,
         string $ecc,
         array $style = []
     ) {
@@ -89,8 +89,8 @@ class BingoPdf extends TCPDF
 
     public function textPdf(
         string $text,
-        float $xPos,
-        float $yPos,
+        ?float $xPos,
+        ?float $yPos,
         float $width,
         float $height,
         string $align,
@@ -115,12 +115,14 @@ class BingoPdf extends TCPDF
         $this->setFillColor($bg[0], $bg[1], $bg[2]);
         $this->setFont($args['font'], $args['style'], $args['size']);
         $this->MultiCell($width, $height, $text, $args['border'], $align, $args['fill'], $args['new'], $xPos, $yPos, true, 0, false, true, $args['maxh'], $args['valign'], false);
+        $this->setTextColor(self::hexToRGB('#000000'));
+        $this->setFillColor(self::hexToRGB('#FFFFFF'));
     }
 
     public function textBoxPdf(
         string $text,
-        float $xPos,
-        float $yPos,
+        ?float $xPos,
+        ?float $yPos,
         float $width,
         float $height,
         array $args
